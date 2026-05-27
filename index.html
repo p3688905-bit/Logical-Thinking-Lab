@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>思辨殿堂：東方哲學與邏輯思想實驗室</title>
+  
+  <!-- 引入 Tailwind CSS 構建現代、精緻的 UI -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入 Lucide Icons 向量圖標 -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* 深邃東方禪意、玻璃擬態(Glassmorphism)與微光質感 */
+    body {
+      background-color: #0b0d13;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(34, 211, 238, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(212, 163, 89, 0.05) 0%, transparent 40%),
+        url('https://www.transparenttextures.com/patterns/dark-matter.png');
+      font-family: "PingFang TC", "Heiti TC", "Microsoft JhengHei", serif;
+      color: #e2e8f0;
+    }
+
+    .glass-card {
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(212, 163, 89, 0.3);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 163, 89, 0.08);
+    }
+
+    /* 思維進度漸變條動態效果 */
+    .shimmer-progress {
+      background: linear-gradient(90deg, #1e293b 0%, #1e1e38 50%, #1e293b 100%);
+      background-size: 200% 100%;
+      animation: shimmer 2.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between py-8 px-4 sm:px-8">
+
+  <!-- ================= 主頁容器 ================= -->
+  <div class="max-w-7xl w-full mx-auto">
+    
+    <!-- 頂部：思想殿堂標題與精神追求 -->
+    <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border-b border-slate-800 pb-8 mb-10">
+      <div class="max-w-2xl">
+        <div class="flex items-center gap-3">
+          <span class="px-3 py-1 text-xs font-bold text-amber-400 bg-amber-950/40 border border-amber-900/50 rounded-full">
+            經典思辨合集
+          </span>
+          <span class="text-xs text-slate-500">純粹理性 ➔ 認知突圍</span>
+        </div>
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-100 to-cyan-200 mt-3 tracking-widest leading-none">
+          思辨殿堂
+        </h1>
+        <p class="text-slate-400 mt-3 text-sm sm:text-base leading-relaxed">
+          歡迎進入古代哲學與邏輯思想實驗室。本系統精選十個關於語言、時空、真理與心靈的千古論證。請在此拆解謬誤，釐清真理的邊界。
+        </p>
+      </div>
+
+      <!-- 右側：修為系統面板（主觀解鎖反饋） -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 w-full lg:w-96 shadow-2xl flex flex-col gap-4 glow-gold">
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-slate-400 font-bold tracking-wider flex items-center gap-1">
+            <i data-lucide="award" class="w-4 h-4 text-amber-500"></i> 當前思想修為
+          </span>
+          <span id="rank-badge" class="text-xs px-2.5 py-0.5 font-extrabold bg-amber-500 text-slate-950 rounded-md">
+            理智凡人
+          </span>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs mb-1.5 font-semibold">
+            <span class="text-slate-500">思維參透度</span>
+            <span id="progress-text" class="text-amber-400">0% (0/10 關)</span>
+          </div>
+          <div class="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
+            <div id="progress-bar" class="h-full bg-gradient-to-r from-amber-600 via-amber-400 to-cyan-400 transition-all duration-700 w-0"></div>
+          </div>
+        </div>
+        <p id="rank-quote" class="text-[11px] text-slate-500 italic">
+          「吾生也有涯，而知也無涯...」
+        </p>
+      </div>
+    </header>
+
+    <!-- 檢索與篩選控制區 -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+      <!-- 分類標籤頁切換 -->
+      <div class="flex flex-wrap gap-2 w-full md:w-auto" id="filter-tabs">
+        <button onclick="filterCategory('all')" id="tab-all" class="text-xs px-4 py-2 rounded-lg font-bold border transition-all bg-amber-500 text-slate-950 border-amber-500">
+          全部實驗
+        </button>
+        <button onclick="filterCategory('先秦儒道')" id="tab-先秦儒道" class="text-xs px-4 py-2 rounded-lg font-bold border border-slate-800 text-slate-400 hover:text-slate-200">
+          先秦儒道
+        </button>
+        <button onclick="filterCategory('名家語言')" id="tab-名家語言" class="text-xs px-4 py-2 rounded-lg font-bold border border-slate-800 text-slate-400 hover:text-slate-200">
+          名家語言
+        </button>
+        <button onclick="filterCategory('時空與實證')" id="tab-時空與實證" class="text-xs px-4 py-2 rounded-lg font-bold border border-slate-800 text-slate-400 hover:text-slate-200">
+          時空與實證
+        </button>
+        <button onclick="filterCategory('行為與決策')" id="tab-行為與決策" class="text-xs px-4 py-2 rounded-lg font-bold border border-slate-800 text-slate-400 hover:text-slate-200">
+          行為與決策
+        </button>
+      </div>
+
+      <!-- 即時關鍵字搜尋框 -->
+      <div class="relative w-full md:w-80">
+        <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
+        <input 
+          id="search-input"
+          oninput="handleSearch()"
+          type="text" 
+          placeholder="搜尋經典、論點、謬誤..." 
+          class="w-full bg-slate-950/80 border border-slate-800 focus:border-amber-500/50 rounded-lg py-2 pl-9 pr-4 text-xs text-slate-200 placeholder-slate-600 focus:outline-none transition-all"
+        />
+      </div>
+    </div>
+
+    <!-- 遊戲卡片展示網格 -->
+    <main id="games-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <!-- 由 JavaScript 生成 10 款小遊戲 -->
+    </main>
+
+  </div>
+
+  <!-- 底部：哲學省思與版權 -->
+  <footer class="max-w-7xl w-full mx-auto mt-20 border-t border-slate-900 pt-8 text-center text-slate-600 text-xs">
+    <p class="mb-2">理智在此閃耀，名家在此爭鳴。本系統旨在啟迪大腦邏輯，解構生活中的不自覺謬誤。</p>
+    <p>© 2026 東方邏輯與思想實驗中心 · 乾坤理致</p>
+  </footer>
+
+  <!-- ================= 遊戲核心控制與網址配置 ================= -->
+  <script>
+    // =============================================================
+    // 🔴🔴🔴🔴🔴 【自訂網址替換區 (CUSTOM GAME URLS)】 🔴🔴🔴🔴🔴
+    // 請在此處填入您自己的十個小遊戲線上網址或本地相對檔案網址。
+    // =============================================================
+    const CUSTOM_GAME_LINKS = {
+      game1: "https://p3688905-bit.github.io/wind2/",     // 1. 禪悟之鏡：風旛心動 (可替換為外部網址，如 "https://yourdomain.com/game1.html")
+      game2: "https://p3688905-bit.github.io/fish2/",       // 2. 思辨之梁：濠梁之辯
+      game3: "https://p3688905-bit.github.io/evil2/",        // 3. 思辨之川：人性善惡
+      game4: "https://p3688905-bit.github.io/Sun2/",          // 4. 思辨之衡：兩小兒辯日
+      game5: "https://p3688905-bit.github.io/contradiction2/",    // 5. 思辨之刃：自相矛盾
+      game6: "https://p3688905-bit.github.io/horse2/",       // 6. 名家雄辯：白馬過關
+      game7: "https://p3688905-bit.github.io/deer2/",     // 7. 暗黑邏輯：指鹿為馬
+      game8: "https://p3688905-bit.github.io/Pearl2/",   // 8. 思辨之秤：買櫝還珠
+      game9: "https://p3688905-bit.github.io/Boat2/",      // 9. 思辨之錨：刻舟求劍
+      game10: "https://p3688905-bit.github.io/fox2/"     // 10. 思辨之林：狐假虎威
+    };
+    // =============================================================
+    // 🔴🔴🔴🔴🔴 【自訂網址配置結束】 🔴🔴🔴🔴🔴
+    // =============================================================
+
+    // 十款遊戲基本元數據
+    const GAMES = [
+      {
+        id: "game1",
+        title: "風旛心動：意識投影儀",
+        source: "《六祖壇經》",
+        category: "時空與實證",
+        difficulty: 4,
+        concept: "主體與客觀相融 · 現象學還原",
+        quote: "「不是風動，不是旛動，仁者心動。」",
+        desc: "打破二元對立，透過禪學與現象學理解意識與客觀世界的微妙交融，解碼惠能大師的意識投影公案。",
+        icon: "reflection-zen", // 自訂 Lucide Icon mapping
+        lucideIcon: "eye"
+      },
+      {
+        id: "game2",
+        title: "濠梁之辯：物我觀測儀",
+        source: "《莊子·秋水》",
+        category: "時空與實證",
+        difficulty: 5,
+        concept: "認識論邊界 · 他心問題",
+        quote: "「子非魚，安知魚之樂？」",
+        desc: "探尋人與萬物的認識論邊限，在極致懷疑與直覺感知中，重溫莊子與惠子的濠水世紀思辨之鬥。",
+        icon: "bridge",
+        lucideIcon: "activity"
+      },
+      {
+        id: "game3",
+        title: "人性善惡：哲學辯證儀",
+        source: "《孟子》",
+        category: "先秦儒道",
+        difficulty: 4,
+        concept: "歸謬法 · 本能與道德範疇",
+        quote: "「人性之善也，猶水之就下也。」",
+        desc: "拆解杞柳、湍水與炙肉的比喻，從形式邏輯角度，對撞孟子、告子與荀子關於人性本質的智慧火花。",
+        icon: "water-flow",
+        lucideIcon: "droplet"
+      },
+      {
+        id: "game4",
+        title: "兩小兒辯日：時空觀測儀",
+        source: "《列子》",
+        category: "時空與實證",
+        difficulty: 3,
+        concept: "經驗主義限制 · 蓬佐認知幻覺",
+        quote: "「日初出大如車蓋，及日中則如盤盂。」",
+        desc: "揭開『晨大日中小』與『日中熱晨涼』的認知迷霧，思考在缺乏工具輔助下，直覺經驗是如何欺騙人類大腦的。",
+        icon: "sun-lens",
+        lucideIcon: "compass"
+      },
+      {
+        id: "game5",
+        title: "自相矛盾：思辨之刃",
+        source: "《韓非子》",
+        category: "行為與決策",
+        difficulty: 2,
+        concept: "邏輯矛盾律 · 非零容忍極限",
+        quote: "「吾盾之堅，物莫能陷也；吾矛之利，於物無不陷也。」",
+        desc: "挑戰經典商人的話術破綻。唯有當兩句絕對互斥的宣告同時顯現，方可動用矛盾之刃擊碎對方的虛妄謊言。",
+        icon: "swords",
+        lucideIcon: "swords"
+      },
+      {
+        id: "game6",
+        title: "白馬非馬：名家雄辯",
+        source: "《公孫龍子》",
+        category: "名家語言",
+        difficulty: 3,
+        concept: "內涵與外延 · 共相與殊相",
+        quote: "「白馬非馬，可乎？曰：可。」",
+        desc: "站在古代守關士卒面前，解構文字中『是』所代表的『同一等同』與『類別屬於』，理清概念邊界以助白馬出關。",
+        icon: "horse-logic",
+        lucideIcon: "scroll"
+      },
+      {
+        id: "game7",
+        title: "指鹿為馬：暗黑邏輯",
+        source: "《史記》",
+        category: "行為與決策",
+        difficulty: 3,
+        concept: "肯定後件 · 訴諸武力與人身攻擊",
+        quote: "「陛下，此乃絕世神駿，千里馬也。」",
+        desc: "這是一場用極致威壓進行的服從性測試。剖析大殿之上趙高的詭辯術，利用現代邏輯工具確保你自己的精神防線不被閹割。",
+        icon: "gavel",
+        lucideIcon: "gavel"
+      },
+      {
+        id: "game8",
+        title: "買櫝還珠：思辨之秤",
+        source: "《韓非子》",
+        category: "行為與決策",
+        difficulty: 4,
+        concept: "主觀效用理論 · 柏拉圖改善",
+        quote: "「楚人有鬻其珠於鄭者，為木蘭之櫃。」",
+        desc: "反思古老成語的道德說教。在博弈與經濟學視野下，這其實是一場讓楚鄭兩者主觀效用雙贏的帕累托最優平衡！",
+        icon: "scales",
+        lucideIcon: "scale"
+      },
+      {
+        id: "game9",
+        title: "刻舟求劍：思辨之錨",
+        source: "《呂氏春秋》",
+        category: "時空與實證",
+        difficulty: 3,
+        concept: "相對性參考系 · 認識論擬像",
+        quote: "「是吾劍之所從墜。」",
+        desc: "以動態物理學相對運動規律，解體楚人在快速漂移系統中留下的靜止錨點。明白地圖不等於疆域的時空奧秘。",
+        icon: "anchor",
+        lucideIcon: "anchor"
+      },
+      {
+        id: "game10",
+        title: "狐假虎威：思辨之林",
+        source: "《戰國策》",
+        category: "名家語言",
+        difficulty: 2,
+        concept: "相關非因果 · 控制變因法",
+        quote: "「獸見之皆走，以為畏狐也，其實畏虎也。」",
+        desc: "身臨大林之中，實施嚴謹的『單一控制變因』觀測，揭穿老虎在歸因上的經典謬誤，掌握真正的因果檢定法。",
+        icon: "forest-radar",
+        lucideIcon: "tree-pine"
+      }
+    ];
+
+    let activeCategory = 'all';
+    let searchQuery = '';
+    let masteredGames = JSON.parse(localStorage.getItem('mastered_logic_games')) || [];
+
+    // 計算並刷新「修為」境界系統
+    function updateMasterySystem() {
+      const count = masteredGames.length;
+      const percent = Math.round((count / GAMES.length) * 100);
+      
+      // 更新進度文字與進度條
+      document.getElementById('progress-text').textContent = `${percent}% (${count}/${GAMES.length} 關)`;
+      document.getElementById('progress-bar').style.width = `${percent}%`;
+
+      // 境界頭銜等級
+      let rank = "理智凡人";
+      let quote = "「吾生也有涯，而知也無涯，以有涯隨無涯，殆已！」";
+
+      if (count >= 1 && count <= 2) {
+        rank = "濠梁觀魚者";
+        quote = "「遊心於物之初，我亦知道魚正在水波中自得其樂。」";
+      } else if (count >= 3 && count <= 5) {
+        rank = "函谷辯士";
+        quote = "「非形而上，非形而下，名不實，則言不順，事不成。」";
+      } else if (count >= 6 && count <= 8) {
+        rank = "名家大師";
+        quote = "「白馬非馬，天下無不陷之矛與不可陷之盾，皆入掌中。」";
+      } else if (count >= 9) {
+        rank = "齊物大宗師";
+        quote = "「萬物與我為一，風旛心皆不動。天地同生，與我為並。」";
+      }
+
+      const rankBadge = document.getElementById('rank-badge');
+      rankBadge.textContent = rank;
+      
+      // 根據段位更改顏色
+      if (count >= 9) {
+        rankBadge.className = "text-xs px-2.5 py-0.5 font-extrabold bg-cyan-400 text-slate-950 rounded-md shadow-lg shadow-cyan-500/20";
+      } else if (count >= 6) {
+        rankBadge.className = "text-xs px-2.5 py-0.5 font-extrabold bg-amber-400 text-slate-950 rounded-md shadow-lg shadow-amber-500/20";
+      } else {
+        rankBadge.className = "text-xs px-2.5 py-0.5 font-extrabold bg-slate-700 text-slate-100 rounded-md";
+      }
+
+      document.getElementById('rank-quote').textContent = quote;
+    }
+
+    // 標記/取消標記「已參透」狀態
+    window.toggleMastery = function(gameId) {
+      if (masteredGames.includes(gameId)) {
+        masteredGames = masteredGames.filter(id => id !== gameId);
+      } else {
+        masteredGames.push(gameId);
+      }
+      localStorage.setItem('mastered_logic_games', JSON.stringify(masteredGames));
+      updateMasterySystem();
+      renderGames();
+    };
+
+    // 關鍵字篩選搜尋
+    window.handleSearch = function() {
+      searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
+      renderGames();
+    };
+
+    // 分類篩選頁籤
+    window.filterCategory = function(category) {
+      activeCategory = category;
+
+      // 更新分頁按鈕高亮
+      const tabs = ['all', '先秦儒道', '名家語言', '時空與實證', '行為與決策'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if (!btn) return;
+        if (t === category) {
+          btn.className = "text-xs px-4 py-2 rounded-lg font-bold border transition-all bg-amber-500 text-slate-950 border-amber-500";
+        } else {
+          btn.className = "text-xs px-4 py-2 rounded-lg font-bold border border-slate-800 text-slate-400 hover:text-slate-200";
+        }
+      });
+
+      renderGames();
+    };
+
+    // 繪製卡片
+    function renderGames() {
+      const grid = document.getElementById('games-grid');
+      grid.innerHTML = '';
+
+      // 進行資料過濾
+      const filtered = GAMES.filter(g => {
+        const matchesCat = (activeCategory === 'all' || g.category === activeCategory);
+        const matchesSearch = (
+          g.title.toLowerCase().includes(searchQuery) ||
+          g.source.toLowerCase().includes(searchQuery) ||
+          g.concept.toLowerCase().includes(searchQuery) ||
+          g.desc.toLowerCase().includes(searchQuery)
+        );
+        return matchesCat && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-20 text-center text-slate-600 flex flex-col items-center gap-4">
+            <i data-lucide="compass" class="w-12 h-12 text-slate-800 animate-pulse"></i>
+            <p class="text-sm font-medium">查無對應的思辨實驗，或許該概念已被懸置。</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      filtered.forEach(g => {
+        const isMastered = masteredGames.includes(g.id);
+        const difficultyStars = "★".repeat(g.difficulty) + "☆".repeat(5 - g.difficulty);
+        
+        // 🔴🔴🔴 讀取最頂端定義的自訂連結 🔴🔴🔴
+        const targetUrl = CUSTOM_GAME_LINKS[g.id] || "#";
+
+        const cardHtml = `
+          <div class="glass-card rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden group ${isMastered ? 'border-cyan-500/30' : ''}">
+            <!-- 參透背景光環 -->
+            ${isMastered ? '<div class="absolute -right-16 -bottom-16 w-32 h-32 bg-cyan-500/5 rounded-full pointer-events-none blur-xl"></div>' : ''}
+            
+            <div>
+              <!-- 卡片頂部狀態列 -->
+              <div class="flex justify-between items-center mb-4">
+                <span class="text-xs font-bold text-slate-500 flex items-center gap-1">
+                  <i data-lucide="book-open" class="w-3.5 h-3.5 text-slate-600"></i> ${g.source}
+                </span>
+                <span class="px-2.5 py-0.5 text-[10px] font-bold rounded ${
+                  g.category === '先秦儒道' ? 'bg-orange-950/40 text-orange-400 border border-orange-900/40' :
+                  g.category === '名家語言' ? 'bg-purple-950/40 text-purple-400 border border-purple-900/40' :
+                  g.category === '時空與實證' ? 'bg-cyan-950/40 text-cyan-400 border border-cyan-900/40' :
+                  'bg-rose-950/40 text-rose-400 border border-rose-900/40'
+                }">
+                  ${g.category}
+                </span>
+              </div>
+
+              <!-- 標題與簡介 -->
+              <h2 class="text-xl font-extrabold text-slate-100 flex items-center gap-2 group-hover:text-amber-300 transition-colors">
+                <i data-lucide="${g.lucideIcon}" class="w-5 h-5 text-amber-500 flex-shrink-0"></i>
+                ${g.title}
+              </h2>
+              <div class="text-[11px] text-amber-500/70 font-semibold mt-1 flex items-center gap-1.5">
+                <span>概念: ${g.concept}</span>
+                <span class="text-slate-700">|</span>
+                <span class="text-slate-400">難度: ${difficultyStars}</span>
+              </div>
+
+              <!-- 經典金句 -->
+              <p class="text-xs bg-slate-950/40 p-2.5 rounded-lg border-l-2 border-amber-500/50 italic text-slate-300 my-4 leading-relaxed font-serif">
+                ${g.quote}
+              </p>
+
+              <!-- 細節簡述 -->
+              <p class="text-xs text-slate-400 leading-relaxed mb-6">
+                ${g.desc}
+              </p>
+            </div>
+
+            <!-- 卡片底部操作列 -->
+            <div class="flex items-center gap-3 border-t border-slate-900 pt-4 mt-auto">
+              <!-- 🔴 進入小遊戲連結按鈕 🔴 -->
+              <a 
+                href="${targetUrl}" 
+                class="flex-grow flex items-center justify-center gap-2 bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/40 text-slate-200 hover:text-amber-300 text-xs py-2.5 px-4 rounded-lg font-bold transition-all shadow shadow-black"
+              >
+                <i data-lucide="terminal" class="w-3.5 h-3.5"></i>
+                進入思辨儀
+              </a>
+
+              <!-- 標記已參透開關 -->
+              <button 
+                onclick="toggleMastery('${g.id}')"
+                class="px-3 py-2.5 rounded-lg text-xs font-bold border transition-all flex items-center gap-1.5 ${
+                  isMastered 
+                    ? 'bg-cyan-950/30 text-cyan-400 border-cyan-800 hover:bg-cyan-900/30' 
+                    : 'bg-slate-950/30 text-slate-500 border-slate-900 hover:text-slate-300 hover:border-slate-800'
+                }"
+                title="${isMastered ? '已參悟此理，點擊取消' : '標記此關卡為已通關'}"
+              >
+                <i data-lucide="${isMastered ? 'check-circle' : 'circle'}" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">${isMastered ? '已參透' : '未參透'}</span>
+              </button>
+            </div>
+          </div>
+        `;
+        grid.innerHTML += cardHtml;
+      });
+
+      lucide.createIcons();
+    }
+
+    // 初始化頁面
+    document.addEventListener('DOMContentLoaded', () => {
+      updateMasterySystem();
+      renderGames();
+    });
+  </script>
+</body>
+</html>
